@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\ProfileController; // <-- Tambahan untuk profil
 use App\Http\Controllers\WebhookController;
+use App\Http\Controllers\AdminController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -28,9 +29,7 @@ require __DIR__.'/auth.php';
 
 // --- GRUP ADMIN ---
 Route::middleware(['auth', 'role:Admin'])->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return 'Selamat datang di Dasbor Admin. Hanya Admin yang bisa melihat ini.';
-    });
+    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 });
 
 // --- GRUP KASIR (Modul POS) ---
