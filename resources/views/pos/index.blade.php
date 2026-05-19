@@ -8,7 +8,6 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            <!-- Notifikasi Pesan -->
             @if(session('success'))
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
                 {{ session('success') }}
@@ -22,7 +21,6 @@
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 flex flex-col md:flex-row gap-6">
 
-                <!-- Kiri: Daftar Produk -->
                 <div class="w-full md:w-2/3">
                     <h3 class="text-lg font-bold mb-4">Daftar Produk Satiraksa</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -37,14 +35,12 @@
                     </div>
                 </div>
 
-                <!-- Kanan: Form Checkout -->
                 <div class="w-full md:w-1/3 bg-gray-50 p-4 rounded-lg border">
                     <h3 class="text-lg font-bold mb-4 border-b pb-2">Proses Transaksi</h3>
 
                     <form action="{{ route('pos.store') }}" method="POST">
                         @csrf
 
-                        <!-- Pilih Produk -->
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700">Pilih Produk</label>
                             <select name="product_id"
@@ -57,7 +53,6 @@
                             </select>
                         </div>
 
-                        <!-- Jumlah -->
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700">Kuantitas</label>
                             <input type="number" name="quantity" min="1" value="1"
@@ -65,7 +60,6 @@
                                 required>
                         </div>
 
-                        <!-- Metode Pembayaran -->
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700">Metode Pembayaran</label>
                             <select name="payment_method" id="payment_method"
@@ -76,17 +70,18 @@
                             </select>
                         </div>
 
-                        <!-- Input Nominal (Hanya muncul jika tunai) -->
                         <div class="mb-6" id="tunai_input_div">
                             <label class="block text-sm font-medium text-gray-700">Nominal Uang Diterima (Rp)</label>
                             <input type="number" name="amount_paid" id="amount_paid"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                         </div>
 
-                        <button type="submit"
-                            class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded hover:bg-indigo-700 transition">
-                            Proses Checkout
-                        </button>
+                        <div class="mt-6">
+                            <button type="submit"
+                                class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 transition shadow-md">
+                                Proses Checkout
+                            </button>
+                        </div>
                     </form>
                 </div>
 
@@ -94,7 +89,6 @@
         </div>
     </div>
 
-    <!-- Script kecil untuk menghilangkan input tunai jika bayar via Digital -->
     <script>
     function toggleTunaiInput() {
         var method = document.getElementById("payment_method").value;
