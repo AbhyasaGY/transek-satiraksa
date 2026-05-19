@@ -58,10 +58,13 @@ Route::middleware(['auth', 'role:Kasir,Admin'])->group(function () {
     })->name('pos.success');
 });
 
-// --- GRUP RESELLER (Modul Kontrak) ---
+// --- GRUP RESELLER (Modul Kontrak & B2B) ---
 Route::middleware(['auth', 'role:Reseller'])->group(function () {
     Route::get('/reseller/dashboard', [ResellerController::class, 'index'])->name('reseller.dashboard');
     Route::get('/reseller/kontrak/download', [ResellerController::class, 'generateContract'])->name('reseller.contract.download');
+
+    // Rute Katalog Mitra
+    Route::get('/reseller/katalog', [ResellerController::class, 'belanja'])->name('reseller.belanja');
 });
 
 // --- GRUP ROUTE BARU: PELANGGAN ---
