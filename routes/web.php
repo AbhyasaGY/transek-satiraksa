@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\ProfileController; // <-- Tambahan untuk profil
+use App\Http\Controllers\WebhookController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -36,6 +37,11 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
 Route::middleware(['auth', 'role:Kasir,Admin'])->group(function () {
     Route::get('/kasir/pos', [TransactionController::class, 'index'])->name('pos.index');
     Route::post('/kasir/pos/checkout', [TransactionController::class, 'store'])->name('pos.store');
+
+    // Ini tambahan rute baru
+    Route::get('/kasir/pos/sukses', function () {
+        return view('pos.success');
+    })->name('pos.success');
 });
 
 // --- GRUP RESELLER (Modul Kontrak) ---
@@ -44,3 +50,6 @@ Route::middleware(['auth', 'role:Reseller'])->group(function () {
         return 'Ini adalah Dasbor Kemitraan untuk generate Kontrak PDF.';
     });
 });
+
+// Rute API Webhook Midtrans (Tidak boleh dibungkus middleware auth!)
+Route::post('/api/webhook/midtrans', [WebhookController::class, 'midtransHandler']);

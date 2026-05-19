@@ -116,8 +116,11 @@ class TransactionController extends Controller
 
                 DB::commit(); // Simpan permanen ke database
 
-                // Arahkan ke halaman pop-up Midtrans
-                return view('pos.checkout', compact('snapToken', 'transaction'));
+                // Mengembalikan JSON token langsung ke halaman tanpa reload
+                return response()->json([
+                    'status' => 'success',
+                    'snapToken' => $snapToken
+                ]);
             }
 
         } catch (\Exception $e) {

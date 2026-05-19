@@ -38,7 +38,7 @@
                 <div class="w-full md:w-1/3 bg-gray-50 p-4 rounded-lg border">
                     <h3 class="text-lg font-bold mb-4 border-b pb-2">Proses Transaksi</h3>
 
-                    <form action="{{ route('pos.store') }}" method="POST">
+                    <form id="checkoutForm" action="{{ route('pos.store') }}" method="POST">
                         @csrf
 
                         <div class="mb-4">
@@ -89,19 +89,67 @@
         </div>
     </div>
 
-    <script>
-    function toggleTunaiInput() {
-        var method = document.getElementById("payment_method").value;
-        var tunaiDiv = document.getElementById("tunai_input_div");
-        var amountInput = document.getElementById("amount_paid");
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
 
-        if (method === "Digital") {
-            tunaiDiv.style.display = "none";
-            amountInput.required = false;
-        } else {
-            tunaiDiv.style.display = "block";
-            amountInput.required = true;
+    <script>
+        // Mengatur tampilan input tunai
+        function toggleTunaiInput() {
+            var method = document.getElementById("payment_method").value;
+            var tunaiDiv = document.getElementById("tunai_input_div");
+            var amountInput = document.getElementById("amount_paid");
+
+            if (method === "Digital") {
+                tunaiDiv.style.display = "none";
+                amountInput.required = false;
+            } else {
+                tunaiDiv.style.display = "block";
+                amountInput.required = true;
+            }
         }
-    }
+
+        // Mencegah form reload saat bayar digital (Single Page action)
+        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+            var method = document.getElementById("payment_method").value;
+
+            if (method === "Digital") {
+                e.preventDefault(); // Tahan form agar tidak pindah halaman
+
+                var formData = new FormData(this);
+
+                // Kirim data secara asinkron (AJAX)
+                fetch(this.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json' // Beri tahu server kita minta JSON
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.snapToken) {
+                        // Panggil Pop-Up Snap secara instan
+                        window.snap.pay(data.snapToken, {
+                            onSuccess: function(result){
+                                // Arahkan ke halaman Sukses jika berhasil
+                                window.location.href = "{{ route('pos.success') }}";
+                            },
+                            onPending: function(result){
+                                alert("Menunggu pembayaran Anda!");
+                            },
+                            onError: function(result){
+                                alert("Pembayaran Gagal!");
+                            },
+                            onClose: function(){
+                                alert('Anda menutup pop-up sebelum menyelesaikan pembayaran');
+                            }
+                        });
+                    } else {
+                        alert("Gagal memuat sistem pembayaran.");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        });
     </script>
 </x-app-layout>
