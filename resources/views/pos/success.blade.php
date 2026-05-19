@@ -19,10 +19,6 @@
                 <p class="text-gray-600 mb-8">Pembayaran telah berhasil dikonfirmasi. Pesanan sedang diproses.</p>
 
                 <div class="flex justify-center gap-4">
-                    <a href="{{ route('pos.index') }}"
-                        class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg transition shadow">
-                        Lanjut Berbelanja
-                    </a>
                     <a href="/dashboard"
                         class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg transition">
                         Kembali ke Dasbor
