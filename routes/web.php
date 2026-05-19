@@ -1,16 +1,23 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TransactionController; // <-- PASTIKAN BARIS INI ADA DI ATAS
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\ProfileController; // <-- Tambahan untuk profil
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Route bawaan Breeze
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// --- KEMBALIKAN ROUTE PROFILE BAWAAN BREEZE ---
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
 require __DIR__.'/auth.php';
 
@@ -26,7 +33,6 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
 });
 
 // --- GRUP KASIR (Modul POS) ---
-// (Ini yang baru)
 Route::middleware(['auth', 'role:Kasir,Admin'])->group(function () {
     Route::get('/kasir/pos', [TransactionController::class, 'index'])->name('pos.index');
     Route::post('/kasir/pos/checkout', [TransactionController::class, 'store'])->name('pos.store');
