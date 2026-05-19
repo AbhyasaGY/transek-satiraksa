@@ -21,6 +21,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             'api/webhook/midtrans',
         ]);
+
+        // INI TAMBAHAN BARUNYA: Mempercayai HTTPS dari Ngrok
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
