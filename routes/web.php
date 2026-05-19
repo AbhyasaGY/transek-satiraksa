@@ -5,6 +5,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\ProfileController; // <-- Tambahan untuk profil
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ResellerController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -45,9 +46,8 @@ Route::middleware(['auth', 'role:Kasir,Admin'])->group(function () {
 
 // --- GRUP RESELLER (Modul Kontrak) ---
 Route::middleware(['auth', 'role:Reseller'])->group(function () {
-    Route::get('/reseller/kontrak', function () {
-        return 'Ini adalah Dasbor Kemitraan untuk generate Kontrak PDF.';
-    });
+    Route::get('/reseller/dashboard', [ResellerController::class, 'index'])->name('reseller.dashboard');
+    Route::get('/reseller/kontrak/download', [ResellerController::class, 'generateContract'])->name('reseller.contract.download');
 });
 
 // Rute API Webhook Midtrans (Tidak boleh dibungkus middleware auth!)
