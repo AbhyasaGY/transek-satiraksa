@@ -36,11 +36,17 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        // --- TAMBAHAN UPDATE DI SINI ---
+        // Ambil input role dari form (hidden input), set Reseller jika dipilih, sisanya Pelanggan
+        $selectedRole = $request->role === 'reseller' ? 'Reseller' : 'Pelanggan';
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => $selectedRole, // <-- Baris ini menyimpan role ke database
         ]);
+        // --- AKHIR TAMBAHAN ---
 
         event(new Registered($user));
 

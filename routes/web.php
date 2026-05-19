@@ -11,8 +11,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// --- SMART REDIRECTOR ---
 Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
-    // Menggunakan $request->user() agar Intelephense di VS Code tidak kebingungan
     $role = $request->user()->role;
 
     if ($role === 'Admin') {
@@ -21,8 +21,10 @@ Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
         return redirect()->route('pos.index');
     } elseif ($role === 'Reseller') {
         return redirect()->route('reseller.dashboard');
+    } elseif ($role === 'Pelanggan' || empty($role)) {
+        return redirect()->route('pelanggan.dashboard'); // <-- DIUBAH KE SINI
     } else {
-        return abort(403, 'Akses ditolak: Akun Anda tidak memiliki Role yang valid.');
+        return abort(403, 'Akses ditolak: Peran akun tidak valid.');
     }
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -59,6 +61,13 @@ Route::middleware(['auth', 'role:Kasir,Admin'])->group(function () {
 Route::middleware(['auth', 'role:Reseller'])->group(function () {
     Route::get('/reseller/dashboard', [ResellerController::class, 'index'])->name('reseller.dashboard');
     Route::get('/reseller/kontrak/download', [ResellerController::class, 'generateContract'])->name('reseller.contract.download');
+});
+
+// --- GRUP ROUTE BARU: PELANGGAN ---
+Route::middleware(['auth', 'role:Pelanggan'])->group(function () {
+    Route::get('/pelanggan/dashboard', function () {
+        return view('pelanggan.dashboard');
+    })->name('pelanggan.dashboard');
 });
 
 // Rute API Webhook Midtrans (Tidak boleh dibungkus middleware auth!)

@@ -3,8 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Satiraksa Store - Sistem Kemitraan & Penjualan</title>
-
+    <title>Satiraksa Store - Sistem Kemitraan</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="antialiased bg-gray-50 text-gray-800 font-sans">
@@ -13,75 +12,56 @@
         <div class="text-2xl font-extrabold text-indigo-600 tracking-tighter">
             SATIRAKSA<span class="text-gray-800">STORE</span>
         </div>
-
         <div>
-            @if (Route::has('login'))
-                @auth
-                    <a href="{{ url('/dashboard') }}" class="font-bold text-indigo-600 hover:text-indigo-800 transition">Ke Dasbor Saya &rarr;</a>
-                @else
-                    <a href="{{ route('login') }}" class="font-semibold text-gray-600 hover:text-indigo-600 transition mr-6">Masuk (Login)</a>
-                    @if (Route::has('register'))
-                        <a href="{{ route('register') }}" class="font-bold bg-indigo-600 text-white px-5 py-2.5 rounded-lg hover:bg-indigo-700 transition shadow-md">Daftar Akun</a>
-                    @endif
-                @endauth
-            @endif
+            @auth
+                <a href="{{ url('/dashboard') }}" class="font-bold text-indigo-600 hover:text-indigo-800 transition">Ke Dasbor Saya &rarr;</a>
+            @else
+                <a href="{{ route('login') }}" class="font-semibold text-gray-600 hover:text-indigo-600 transition">Masuk Aplikasi</a>
+            @endauth
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-6 py-16 md:py-24 flex flex-col md:flex-row items-center gap-12">
+    @if (session('status'))
+        <div class="max-w-md mx-auto mt-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative text-center shadow" role="alert">
+            <span class="block sm:inline">{{ session('status') }}</span>
+        </div>
+    @endif
 
-        <div class="w-full md:w-1/2 flex flex-col items-start text-left">
-            <span class="inline-block py-1 px-3 rounded-full bg-indigo-100 text-indigo-700 text-sm font-semibold mb-4">
-                Sistem Informasi Terintegrasi
-            </span>
-            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-6">
-                Kelola Penjualan & Kemitraan Lebih Cerdas.
+    <main class="max-w-7xl mx-auto px-6 py-16">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">
+                Selamat Datang di Platform Satiraksa Store
             </h1>
-            <p class="text-lg text-gray-600 mb-8 leading-relaxed">
-                Satiraksa Store menghadirkan platform Point of Sales (POS) modern yang dilengkapi dengan manajemen inventaris otomatis, pembayaran digital Midtrans, dan pembuatan kontrak kemitraan instan.
-            </p>
-
-            <div class="flex gap-4">
-                @auth
-                    <a href="{{ url('/dashboard') }}" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-indigo-700 transition">Buka Aplikasi</a>
-                @else
-                    <a href="{{ route('login') }}" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-indigo-700 transition">Mulai Sekarang</a>
-                @endauth
-            </div>
+            <p class="text-lg text-gray-600">Silakan pilih jenis akun pendaftaran di bawah ini sesuai dengan kebutuhan Anda.</p>
         </div>
 
-        <div class="w-full md:w-1/2">
-            <div class="relative bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
-                <div class="absolute -top-4 -right-4 w-24 h-24 bg-blue-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-                <div class="absolute -bottom-8 -left-4 w-24 h-24 bg-indigo-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
 
-                <h3 class="text-xl font-bold mb-4 text-gray-800">Fitur Unggulan</h3>
-                <ul class="space-y-4">
-                    <li class="flex items-center text-gray-600">
-                        <svg class="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        Kasir (POS) & Real-time Stok
-                    </li>
-                    <li class="flex items-center text-gray-600">
-                        <svg class="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        Integrasi Payment Gateway Midtrans
-                    </li>
-                    <li class="flex items-center text-gray-600">
-                        <svg class="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        Smart Role Redirect (Admin, Kasir, Reseller)
-                    </li>
-                    <li class="flex items-center text-gray-600">
-                        <svg class="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        Auto-Generate Kontrak PDF
-                    </li>
-                </ul>
+            <div class="bg-white p-8 rounded-2xl shadow-md border border-gray-100 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Akun Pelanggan</h3>
+                    <p class="text-gray-600 text-sm mb-6">Daftar sebagai pelanggan umum untuk melakukan transaksi pembelian retail produk Satiraksa secara langsung.</p>
+                </div>
+                <a href="{{ route('register', ['role' => 'pelanggan']) }}" class="w-full text-center py-3 bg-gray-800 text-white font-bold rounded-xl hover:bg-gray-900 transition">
+                    Daftar Pelanggan
+                </a>
             </div>
-        </div>
 
+            <div class="bg-gradient-to-br from-indigo-900 to-slate-900 p-8 rounded-2xl shadow-xl border border-indigo-950 flex flex-col justify-between text-white relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-3 bg-indigo-600 text-xs font-bold uppercase rounded-bl-xl tracking-widest text-indigo-100">
+                    Eksklusif
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-2 text-indigo-300">Kemitraan Reseller</h3>
+                    <p class="text-indigo-200 text-sm mb-6">Daftar sebagai mitra bisnis resmi. Dapatkan akses harga grosir khusus, manajemen stok dropship, dan penandatanganan kontrak kemitraan digital secara instan.</p>
+                </div>
+                <a href="{{ route('register', ['role' => 'reseller']) }}" class="w-full text-center py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-500 transition shadow-lg shadow-indigo-900/50">
+                    Gabung Jadi Mitra Resmi
+                </a>
+            </div>
+
+        </div>
     </main>
-
-    <footer class="border-t border-gray-200 mt-12 py-8 text-center text-gray-500 text-sm">
-        &copy; {{ date('Y') }} Satiraksa Store. Proyek Pengembangan Web Terintegrasi.
-    </footer>
 
 </body>
 </html>
