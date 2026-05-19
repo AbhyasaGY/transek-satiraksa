@@ -11,8 +11,19 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
+Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
+    // Menggunakan $request->user() agar Intelephense di VS Code tidak kebingungan
+    $role = $request->user()->role;
+
+    if ($role === 'Admin') {
+        return redirect()->route('admin.dashboard');
+    } elseif ($role === 'Kasir') {
+        return redirect()->route('pos.index');
+    } elseif ($role === 'Reseller') {
+        return redirect()->route('reseller.dashboard');
+    } else {
+        return abort(403, 'Akses ditolak: Akun Anda tidak memiliki Role yang valid.');
+    }
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // --- KEMBALIKAN ROUTE PROFILE BAWAAN BREEZE ---
