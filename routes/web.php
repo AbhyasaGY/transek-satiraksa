@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController; // <-- Tambahan untuk profil
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ResellerController;
+use App\Http\Controllers\PelangganController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -65,9 +66,10 @@ Route::middleware(['auth', 'role:Reseller'])->group(function () {
 
 // --- GRUP ROUTE BARU: PELANGGAN ---
 Route::middleware(['auth', 'role:Pelanggan'])->group(function () {
-    Route::get('/pelanggan/dashboard', function () {
-        return view('pelanggan.dashboard');
-    })->name('pelanggan.dashboard');
+    Route::get('/pelanggan/dashboard', [PelangganController::class, 'dashboard'])->name('pelanggan.dashboard');
+
+    // Tambahan rute untuk menu belanja
+    Route::get('/pelanggan/belanja', [PelangganController::class, 'belanja'])->name('pelanggan.belanja');
 });
 
 // Rute API Webhook Midtrans (Tidak boleh dibungkus middleware auth!)
