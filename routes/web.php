@@ -51,6 +51,9 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
 
     // TAMBAHKAN BARIS INI: Rute otomatis untuk CRUD Produk
     Route::resource('admin/products', ProductController::class);
+
+    Route::get('/admin/kontrak', [\App\Http\Controllers\AdminController::class, 'validasiKontrak'])->name('admin.contracts');
+    Route::post('/admin/kontrak/{id}/proses', [\App\Http\Controllers\AdminController::class, 'prosesValidasi'])->name('admin.contracts.process');
 });
 
 // --- GRUP KASIR (Modul POS) ---
@@ -71,6 +74,8 @@ Route::middleware(['auth', 'role:Reseller'])->group(function () {
 
     // Rute Katalog Mitra
     Route::get('/reseller/katalog', [ResellerController::class, 'belanja'])->name('reseller.belanja');
+
+    Route::post('/reseller/kontrak/upload', [\App\Http\Controllers\ResellerController::class, 'uploadContract'])->name('reseller.contract.upload');
 });
 
 // --- GRUP ROUTE BARU: PELANGGAN ---

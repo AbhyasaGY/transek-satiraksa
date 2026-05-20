@@ -1,7 +1,7 @@
 <x-guest-layout>
     <form method="POST" action="{{ route('register') }}">
         @csrf
-        <input type="hidden" name="role" value="{{ request()->query('role', 'pelanggan') }}">
+        <input type="hidden" name="role" value="{{ old('role', request()->query('role', 'pelanggan')) }}">
 
         <!-- Name -->
         <div>

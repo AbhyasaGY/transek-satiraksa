@@ -33,4 +33,28 @@ class AdminController extends Controller
             'lowStockProducts'
         ));
     }
+
+    // (Posisikan di bawah fungsi index milik Admin)
+
+    // 1. Tampilkan Halaman Validasi
+    public function validasiKontrak()
+    {
+        // Ambil reseller yang sudah upload kontrak (statusnya bukan 'Belum Upload')
+        $resellers = \App\Models\User::where('role', 'Reseller')
+                        ->where('contract_status', '!=', 'Belum Upload')
+                        ->latest()
+                        ->get();
+
+        return view('admin.contracts', compact('resellers'));
+    }
+
+    // 2. Proses Persetujuan/Penolakan
+    public function prosesValidasi(Request $request, $id)
+    {
+        $user = \App\Models\User::findOrFail($id);
+        $user->contract_status = $request->status; // Isinya 'Disetujui' atau 'Ditolak'
+        $user->save();
+
+        return redirect()->back()->with('success', 'Status kontrak Mitra ' . $user->name . ' berhasil diubah menjadi ' . $request->status);
+    }
 }

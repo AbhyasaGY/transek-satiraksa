@@ -24,6 +24,9 @@
                     <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
                         {{ __('Kelola Produk') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('admin.contracts')" :active="request()->routeIs('admin.contracts')">
+                        {{ __('Validasi Kontrak') }}
+                    </x-nav-link>
 
                     @elseif(Auth::user()->role === 'Kasir')
                     <x-nav-link :href="route('pos.index')" :active="request()->routeIs('pos.index')">
@@ -129,6 +132,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
                 {{ __('Kelola Produk') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('admin.contracts')" :active="request()->routeIs('admin.contracts')">
+                {{ __('Validasi Kontrak') }}
             </x-responsive-nav-link>
             @elseif(Auth::user()->role === 'Kasir')
             <x-responsive-nav-link :href="route('pos.index')" :active="request()->routeIs('pos.index')">
