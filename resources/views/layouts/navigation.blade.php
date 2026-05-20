@@ -21,6 +21,9 @@
                     <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                         {{ __('Dasbor Admin') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
+                        {{ __('Kelola Produk') }}
+                    </x-nav-link>
 
                     @elseif(Auth::user()->role === 'Kasir')
                     <x-nav-link :href="route('pos.index')" :active="request()->routeIs('pos.index')">
@@ -124,6 +127,9 @@
             <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                 {{ __('Dasbor Admin') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
+                {{ __('Kelola Produk') }}
+            </x-responsive-nav-link>
             @elseif(Auth::user()->role === 'Kasir')
             <x-responsive-nav-link :href="route('pos.index')" :active="request()->routeIs('pos.index')">
                 {{ __('Kasir (POS)') }}
@@ -136,12 +142,12 @@
             <x-responsive-nav-link :href="route('reseller.belanja')" :active="request()->routeIs('reseller.belanja')">
                 {{ __('Pesan Stok (Grosir)') }}
             </x-responsive-nav-link>
-            <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')">
+            <x-responsive-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')">
                 {{ __('Keranjang') }}
-            </x-nav-link>
-            <x-nav-link :href="route('purchase.history')" :active="request()->routeIs('purchase.history')">
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('purchase.history')" :active="request()->routeIs('purchase.history')">
                 {{ __('Riwayat Pembelian') }}
-            </x-nav-link>
+            </x-responsive-nav-link>
             @elseif(Auth::user()->role === 'Pelanggan')
             <x-responsive-nav-link :href="route('pelanggan.dashboard')"
                 :active="request()->requestUri === '/pelanggan/dashboard'">
@@ -150,12 +156,12 @@
             <x-responsive-nav-link :href="route('pelanggan.belanja')" :active="request()->routeIs('pelanggan.belanja')">
                 {{ __('Katalog Belanja') }}
             </x-responsive-nav-link>
-            <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')">
+            <x-responsive-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')">
                 {{ __('Keranjang') }}
-            </x-nav-link>
-            <x-nav-link :href="route('purchase.history')" :active="request()->routeIs('purchase.history')">
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('purchase.history')" :active="request()->routeIs('purchase.history')">
                 {{ __('Riwayat Pembelian') }}
-            </x-nav-link>
+            </x-responsive-nav-link>
             @endif
         </div>
 

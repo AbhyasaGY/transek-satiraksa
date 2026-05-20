@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ResellerController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\ProductController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -43,9 +44,13 @@ require __DIR__.'/auth.php';
 // CUSTOM ROUTES: ROLE-BASED ACCESS CONTROL
 // ==========================================
 
-// --- GRUP ADMIN ---
+// --- GRUP ROUTE ADMIN ---
 Route::middleware(['auth', 'role:Admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    // Rute dasbor admin yang sudah ada sebelumnya
+    Route::get('/admin/dashboard', [\App\Http\Controllers\AdminController::class, 'index'])->name('admin.dashboard');
+
+    // TAMBAHKAN BARIS INI: Rute otomatis untuk CRUD Produk
+    Route::resource('admin/products', ProductController::class);
 });
 
 // --- GRUP KASIR (Modul POS) ---
