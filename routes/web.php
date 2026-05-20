@@ -7,6 +7,7 @@ use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ResellerController;
 use App\Http\Controllers\PelangganController;
+use App\Http\Controllers\CartController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -73,6 +74,17 @@ Route::middleware(['auth', 'role:Pelanggan'])->group(function () {
 
     // Tambahan rute untuk menu belanja
     Route::get('/pelanggan/belanja', [PelangganController::class, 'belanja'])->name('pelanggan.belanja');
+});
+
+// --- GRUP KERANJANG BELANJA ---
+Route::middleware(['auth'])->group(function () {
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+
+    // UBAH BARIS INI MENJADI POST:
+    Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
+
+    Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 });
 
 // Rute API Webhook Midtrans (Tidak boleh dibungkus middleware auth!)

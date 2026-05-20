@@ -34,6 +34,9 @@
                     <x-nav-link :href="route('reseller.belanja')" :active="request()->routeIs('reseller.belanja')">
                         {{ __('Pesan Stok (Grosir)') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')">
+                        {{ __('Keranjang') }}
+                    </x-nav-link>
 
                     @elseif(Auth::user()->role === 'Pelanggan')
                     <x-nav-link :href="route('pelanggan.dashboard')"
@@ -42,6 +45,9 @@
                     </x-nav-link>
                     <x-nav-link :href="route('pelanggan.belanja')" :active="request()->routeIs('pelanggan.belanja')">
                         {{ __('Katalog Belanja') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')">
+                        {{ __('Keranjang') }}
                     </x-nav-link>
                     @endif
 
