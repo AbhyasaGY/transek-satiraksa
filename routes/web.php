@@ -76,15 +76,16 @@ Route::middleware(['auth', 'role:Pelanggan'])->group(function () {
     Route::get('/pelanggan/belanja', [PelangganController::class, 'belanja'])->name('pelanggan.belanja');
 });
 
-// --- GRUP KERANJANG BELANJA ---
+// --- GRUP KERANJANG BELANJA (Di dalam middleware auth) ---
 Route::middleware(['auth'])->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-
-    // UBAH BARIS INI MENJADI POST:
     Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
-
     Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
     Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+
+    // TAMBAHKAN 2 ROUTE BARU INI:
+    Route::get('/payment/success', [CartController::class, 'success'])->name('payment.success');
+    Route::get('/purchase-history', [CartController::class, 'history'])->name('purchase.history');
 });
 
 // Rute API Webhook Midtrans (Tidak boleh dibungkus middleware auth!)

@@ -42,8 +42,8 @@
     document.getElementById('pay-button').onclick = function() {
         snap.pay('{{ $snapToken }}', {
             onSuccess: function(result) {
-                // Jika sukses dibayar, kembali ke dasbor
-                window.location.href = "{{ url('/dashboard') }}";
+                // Ubah tujuannya ke halaman sukses pembayaran
+                window.location.href = "{{ route('payment.success') }}";
             },
             onPending: function(result) {
                 // Jika pending (misal pilih transfer bank tapi belum transfer), kembali ke dasbor
@@ -55,7 +55,8 @@
             },
             onClose: function() {
                 alert(
-                    'Anda menutup layar sebelum menyelesaikan pembayaran. Silakan selesaikan pembayaran Anda.');
+                    'Anda menutup layar sebelum menyelesaikan pembayaran. Silakan selesaikan pembayaran Anda.'
+                    );
             }
         });
     };

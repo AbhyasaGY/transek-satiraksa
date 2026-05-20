@@ -37,6 +37,9 @@
                     <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')">
                         {{ __('Keranjang') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('purchase.history')" :active="request()->routeIs('purchase.history')">
+                        {{ __('Riwayat Pembelian') }}
+                    </x-nav-link>
 
                     @elseif(Auth::user()->role === 'Pelanggan')
                     <x-nav-link :href="route('pelanggan.dashboard')"
@@ -48,6 +51,9 @@
                     </x-nav-link>
                     <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')">
                         {{ __('Keranjang') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('purchase.history')" :active="request()->routeIs('purchase.history')">
+                        {{ __('Riwayat Pembelian') }}
                     </x-nav-link>
                     @endif
 
@@ -130,6 +136,12 @@
             <x-responsive-nav-link :href="route('reseller.belanja')" :active="request()->routeIs('reseller.belanja')">
                 {{ __('Pesan Stok (Grosir)') }}
             </x-responsive-nav-link>
+            <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')">
+                {{ __('Keranjang') }}
+            </x-nav-link>
+            <x-nav-link :href="route('purchase.history')" :active="request()->routeIs('purchase.history')">
+                {{ __('Riwayat Pembelian') }}
+            </x-nav-link>
             @elseif(Auth::user()->role === 'Pelanggan')
             <x-responsive-nav-link :href="route('pelanggan.dashboard')"
                 :active="request()->requestUri === '/pelanggan/dashboard'">
@@ -138,6 +150,12 @@
             <x-responsive-nav-link :href="route('pelanggan.belanja')" :active="request()->routeIs('pelanggan.belanja')">
                 {{ __('Katalog Belanja') }}
             </x-responsive-nav-link>
+            <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')">
+                {{ __('Keranjang') }}
+            </x-nav-link>
+            <x-nav-link :href="route('purchase.history')" :active="request()->routeIs('purchase.history')">
+                {{ __('Riwayat Pembelian') }}
+            </x-nav-link>
             @endif
         </div>
 

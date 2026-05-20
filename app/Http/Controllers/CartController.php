@@ -144,5 +144,25 @@ class CartController extends Controller
             DB::rollBack();
             return redirect()->back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
         }
+
+
+    }
+
+    // 5. Menampilkan Halaman Sukses Pembayaran
+    public function success()
+    {
+        return view('cart.success');
+    }
+
+    // 6. Menampilkan Riwayat Pembelian Pengguna
+    public function history()
+    {
+        // Ambil transaksi milik user yang sedang login beserta detail produk dan status bayarnya
+        $transactions = Transaction::with(['transaction_details.product', 'payment'])
+                                    ->where('user_id', Auth::id())
+                                    ->latest()
+                                    ->get();
+
+        return view('cart.history', compact('transactions'));
     }
 }
