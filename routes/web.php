@@ -72,14 +72,20 @@ Route::middleware(['auth', 'role:Kasir,Admin'])->group(function () {
 // --- GRUP RESELLER (Modul Kontrak & B2B) ---
 Route::middleware(['auth', 'role:Reseller'])->group(function () {
     Route::get('/reseller/dashboard', [ResellerController::class, 'index'])->name('reseller.dashboard');
-    Route::get('/reseller/kontrak/download', [ResellerController::class, 'generateContract'])->name('reseller.contract.download');
+
+    // 1. Rute untuk mencetak PDF kosong (Diubah namanya agar tidak bentrok)
+    Route::get('/reseller/kontrak/generate', [ResellerController::class, 'generateContract'])->name('reseller.contract.generate');
+
+    // 2. Rute untuk mengunggah dokumen fisik (Disesuaikan dengan action di form View)
+    Route::post('/reseller/kontrak/upload', [ResellerController::class, 'uploadContract'])->name('reseller.uploadContract');
+
+    // 3. Rute untuk mengunduh dokumen fisik (Lapis 2 & 3)
+    // WAJIB berada di dalam Middleware agar fungsi Auth::id() di Controller bisa membaca siapa yang login
+    Route::get('/reseller/kontrak/{id}/download', [ResellerController::class, 'downloadContract'])->name('reseller.contract.downloadFile');
 
     // Rute Katalog Mitra
     Route::get('/reseller/katalog', [ResellerController::class, 'belanja'])->name('reseller.belanja');
-
-    Route::post('/reseller/kontrak/upload', [\App\Http\Controllers\ResellerController::class, 'uploadContract'])->name('reseller.contract.upload');
 });
-
 // --- GRUP ROUTE BARU: PELANGGAN ---
 Route::middleware(['auth', 'role:Pelanggan'])->group(function () {
     Route::get('/pelanggan/dashboard', [PelangganController::class, 'dashboard'])->name('pelanggan.dashboard');

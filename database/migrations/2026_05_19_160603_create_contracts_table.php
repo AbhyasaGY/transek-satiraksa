@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('contracts', function (Blueprint $table) {
             $table->id();
+            // Kolom user_id sebagai Foreign Key ke tabel users
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('contract_number');
+            $table->string('file_path');
+            $table->string('status')->default('Pending');
+            $table->date('signed_date')->nullable();
             $table->timestamps();
         });
     }

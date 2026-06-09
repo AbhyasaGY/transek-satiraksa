@@ -46,8 +46,12 @@
                             VALIDASI</span>
                         <p class="text-yellow-800">Dokumen Anda sedang ditinjau oleh Admin. Mohon cek kembali secara
                             berkala.</p>
-                        <a href="{{ asset('storage/' . Auth::user()->contract_file) }}" target="_blank"
+
+                        @if(isset($contract))
+                        <a href="{{ route('reseller.contract.downloadFile', $contract->id) }}" target="_blank"
                             class="mt-4 inline-block text-indigo-600 underline font-bold">Lihat Dokumen Terkirim</a>
+                        @endif
+
                     </div>
                     @else
                     <div class="bg-red-50 border border-red-200 rounded-xl p-6">
@@ -65,13 +69,13 @@
                         @endif
 
                         <div class="flex flex-col sm:flex-row gap-4 mb-6">
-                            <a href="{{ route('reseller.contract.download') }}"
+                            <a href="{{ route('reseller.contract.generate') }}"
                                 class="inline-flex justify-center items-center px-4 py-2 bg-gray-900 rounded-lg font-bold text-white hover:bg-black transition">
                                 1. Unduh Kontrak PDF
                             </a>
                         </div>
 
-                        <form action="{{ route('reseller.contract.upload') }}" method="POST"
+                        <form action="{{ route('reseller.uploadContract') }}" method="POST"
                             enctype="multipart/form-data" class="flex flex-col sm:flex-row gap-3 items-end">
                             @csrf
                             <div class="w-full sm:w-auto flex-1">
@@ -87,30 +91,6 @@
                     </div>
                     @endif
                 </div>
-
-
-                <!-- <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="{{ route('reseller.belanja') }}"
-                        class="inline-flex justify-center items-center px-6 py-3 bg-gray-900 rounded-md font-semibold text-white hover:bg-black transition shadow-lg">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                        </svg>
-                        Pesan Stok Grosir
-                    </a>
-
-                    <a href="{{ route('reseller.contract.download') }}"
-                        class="inline-flex justify-center items-center px-6 py-3 bg-red-600 border border-transparent rounded-md font-semibold text-white hover:bg-red-700 focus:bg-red-700 active:bg-red-900 transition ease-in-out duration-150 shadow-lg">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                            </path>
-                        </svg>
-                        Unduh Kontrak
-                    </a>
-                </div> -->
-
-
 
             </div>
         </div>
