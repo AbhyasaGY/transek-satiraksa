@@ -9,6 +9,8 @@ use App\Http\Controllers\ResellerController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('welcome');
@@ -100,3 +102,18 @@ Route::middleware(['auth'])->group(function () {
 
 // Rute API Webhook Midtrans (Tidak boleh dibungkus middleware auth!)
 Route::post('/api/webhook/midtrans', [WebhookController::class, 'midtransHandler']);
+
+// ==========================================
+// RUTE MAKELAR AI KAMERA (Bypass CORS)
+// ==========================================
+Route::post('/api/scan-kamera', function (Request $request) {
+    // Ambil gambar base64 yang dikirim dari browser Kasir
+    $base64Image = $request->input('image');
+
+    // Laravel yang akan menembak ke server Roboflow (Bebas dari hukum CORS browser)
+    $response = Http::withBody($base64Image, 'application/x-www-form-urlencoded')
+        ->post('https://serverless.roboflow.com/deteksi-mata-uang-rupiah-nerog/2?api_key=yTwDcOCBmI8RvoJ8rfu2');
+
+    // Kembalikan jawaban Roboflow ke browser Kasir
+    return $response->json();
+})->name('api.scan-kamera');

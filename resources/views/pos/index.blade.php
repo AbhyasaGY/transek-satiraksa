@@ -70,16 +70,36 @@
                             </select>
                         </div>
 
-                        <div class="mb-6" id="tunai_input_div">
-                            <label class="block text-sm font-medium text-gray-700">Nominal Uang Diterima (Rp)</label>
-                            <input type="number" name="amount_paid" id="amount_paid"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <div id="tunai_input_div">
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700">Nominal Uang Diterima
+                                    (Rp)</label>
+                                <input type="number" name="amount_paid" id="amount_paid"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                    required>
+                            </div>
+
+                            <div class="mb-4 p-3 border border-dashed border-gray-400 rounded-lg bg-white text-center">
+                                <p class="text-xs text-gray-500 mb-2 font-bold">Wajib arahkan uang ke kamera untuk
+                                    validasi</p>
+                                <div class="flex justify-center mb-2">
+                                    <video id="webcam-video" width="100%" height="auto" autoplay muted playsinline
+                                        class="rounded border bg-black hidden"></video>
+                                </div>
+                                <div id="label-container" class="text-xs font-bold text-red-500 mb-2">Kamera belum aktif
+                                </div>
+                                <button type="button" onclick="mulaiScanner()" id="btn-start-scan"
+                                    class="bg-gray-800 hover:bg-black text-white text-xs font-bold py-1.5 px-3 rounded transition w-full">
+                                    📷 Buka Kamera AI
+                                </button>
+                            </div>
                         </div>
 
                         <div class="mt-6">
-                            <button type="submit"
-                                class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 transition shadow-md">
-                                Proses Checkout
+                            <button type="submit" id="btn-submit-utama"
+                                class="w-full bg-gray-400 text-white font-bold py-3 px-4 rounded-lg cursor-not-allowed transition shadow-md"
+                                disabled>
+                                Menunggu Validasi Uang
                             </button>
                         </div>
                     </form>
@@ -89,58 +109,180 @@
         </div>
     </div>
 
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <script>
-        // Mengatur tampilan input tunai
-        function toggleTunaiInput() {
-            var method = document.getElementById("payment_method").value;
-            var tunaiDiv = document.getElementById("tunai_input_div");
-            var amountInput = document.getElementById("amount_paid");
+    let isTunaiUnlocked = false;
+    const btnSubmitUtama = document.getElementById('btn-submit-utama');
 
-            if (method === "Digital") {
-                tunaiDiv.style.display = "none";
-                amountInput.required = false;
-            } else {
-                tunaiDiv.style.display = "block";
-                amountInput.required = true;
+    // --- LOGIKA TOGGLE INPUT ---
+    function toggleTunaiInput() {
+        var method = document.getElementById("payment_method").value;
+        var tunaiDiv = document.getElementById("tunai_input_div");
+        var amountInput = document.getElementById("amount_paid");
+
+        if (method === "Digital") {
+            tunaiDiv.style.display = "none";
+            amountInput.required = false;
+
+            // Bebaskan tombol jika Digital
+            btnSubmitUtama.disabled = false;
+            btnSubmitUtama.className =
+                "w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 transition shadow-md cursor-pointer";
+            btnSubmitUtama.innerText = "Proses Checkout (Midtrans)";
+
+            matikanKamera(); // Matikan kamera jika sedang hidup
+        } else {
+            tunaiDiv.style.display = "block";
+            amountInput.required = true;
+
+            // Kunci lagi tombol jika Tunai dan belum discan
+            if (!isTunaiUnlocked) {
+                btnSubmitUtama.disabled = true;
+                btnSubmitUtama.className =
+                    "w-full bg-gray-400 text-white font-bold py-3 px-4 rounded-lg cursor-not-allowed transition shadow-md";
+                btnSubmitUtama.innerText = "Menunggu Validasi Uang";
+            }
+        }
+    }
+
+    // Jalankan sekali saat halaman dimuat untuk set status awal (Tunai default)
+    toggleTunaiInput();
+
+
+    // --- LOGIKA AI KAMERA (METODE API RESMI ROBOFLOW BATCH 2) ---
+    const video = document.getElementById("webcam-video");
+    const labelContainer = document.getElementById("label-container");
+    const btnMulaiScan = document.getElementById("btn-start-scan");
+
+    // Kita buat "kanvas tak kasat mata" untuk memotret video
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    async function mulaiScanner() {
+        btnMulaiScan.style.display = "none";
+        video.classList.remove('hidden');
+        labelContainer.innerText = "Nyalakan Kamera...";
+        labelContainer.className = "text-xs font-bold text-yellow-600 mb-2";
+
+        // 1. Minta Izin Kamera
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: true
+                });
+                video.srcObject = stream;
+            } catch (err) {
+                labelContainer.innerText = "Izin kamera ditolak.";
+                labelContainer.className = "text-xs font-bold text-red-600 mb-2";
+                return;
             }
         }
 
-        // Mencegah form reload saat bayar digital (Single Page action)
-        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
-            var method = document.getElementById("payment_method").value;
+        labelContainer.innerText = "🤖 Tempelkan Uang ke Kamera";
+        labelContainer.className = "text-xs font-bold text-indigo-600 mb-2";
 
-            if (method === "Digital") {
-                e.preventDefault(); // Tahan form agar tidak pindah halaman
+        // 2. Lakukan Pemotretan Setiap 1 Detik
+        let scanInterval = setInterval(function() {
+            // Hentikan jika sudah sukses atau ganti metode
+            if (isTunaiUnlocked || document.getElementById("payment_method").value !== 'Uang Tunai') {
+                clearInterval(scanInterval);
+                return;
+            }
 
-                var formData = new FormData(this);
+            // Pastikan kamera sudah benar-benar terbuka
+            if (video.videoWidth === 0) return;
 
-                // Kirim data secara asinkron (AJAX)
-                fetch(this.action, {
+            // Samakan ukuran kanvas dengan resolusi kamera
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            // Jepret gambar dari tag <video> ke dalam <canvas>
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Ubah gambar menjadi format Base64 (Hapus awalan header formatnya)
+            let base64Image = canvas.toDataURL("image/jpeg").split(",")[1];
+
+            // 3. Kirim ke Server Laravel Sendiri (Bebas CORS!)
+            axios.post("{{ route('api.scan-kamera') }}", {
+                    image: base64Image
+                }, {
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}' // Kunci gembok wajib Laravel
+                    }
+                })
+                .then(function(response) {
+                    let predictions = response.data.predictions;
+                    console.log("Log AI: ", predictions); // Cek isi kepala AI di Console
+
+                    // Jika ada uang terdeteksi dengan keyakinan di atas 75% (0.75)
+                    if (predictions && predictions.length > 0 && predictions[0].confidence > 0.75) {
+                        clearInterval(scanInterval); // Hentikan kamera memotret
+                        bukaKunciTunai(predictions[0].class); // Buka gembok kasir
+                    }
+                })
+                .catch(function(error) {
+                    console.error("Error Komunikasi Laravel: ", error);
+                });
+
+        }, 1000); // 1000 ms = 1 detik sekali agar tidak membebani limit API
+    }
+
+    function bukaKunciTunai(namaUang) {
+        isTunaiUnlocked = true;
+        matikanKamera();
+        video.classList.add('hidden');
+
+        labelContainer.innerText = "✅ SAH! (" + namaUang + ")";
+        labelContainer.className = "text-sm font-extrabold text-green-600 mb-2";
+
+        btnSubmitUtama.disabled = false;
+        btnSubmitUtama.className =
+            "w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition shadow-md cursor-pointer";
+        btnSubmitUtama.innerText = "Selesaikan Transaksi Tunai";
+    }
+
+    function matikanKamera() {
+        if (video.srcObject) {
+            let stream = video.srcObject;
+            let tracks = stream.getTracks();
+            tracks.forEach(track => track.stop());
+        }
+    }
+
+
+    // --- LOGIKA AJAX FORM SUBMIT (ASLI BAWAAN ANDA) ---
+    document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+        var method = document.getElementById("payment_method").value;
+
+        if (method === "Digital") {
+            e.preventDefault(); // Tahan form untuk AJAX Midtrans
+            var formData = new FormData(this);
+
+            fetch(this.action, {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json' // Beri tahu server kita minta JSON
+                        'Accept': 'application/json'
                     },
                     body: formData
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.snapToken) {
-                        // Panggil Pop-Up Snap secara instan
                         window.snap.pay(data.snapToken, {
-                            onSuccess: function(result){
-                                // Arahkan ke halaman Sukses jika berhasil
+                            onSuccess: function(result) {
                                 window.location.href = "{{ route('pos.success') }}";
                             },
-                            onPending: function(result){
+                            onPending: function(result) {
                                 alert("Menunggu pembayaran Anda!");
                             },
-                            onError: function(result){
+                            onError: function(result) {
                                 alert("Pembayaran Gagal!");
                             },
-                            onClose: function(){
+                            onClose: function() {
                                 alert('Anda menutup pop-up sebelum menyelesaikan pembayaran');
                             }
                         });
@@ -149,7 +291,9 @@
                     }
                 })
                 .catch(error => console.error('Error:', error));
-            }
-        });
+        }
+        // Jika Uang Tunai, biarkan browser melanjutkan submit biasa (tanpa preventDefault)
+        // yang akan diarahkan ke controller dan pindah ke halaman sukses.
+    });
     </script>
 </x-app-layout>
